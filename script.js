@@ -5,7 +5,7 @@ const operators = document.querySelectorAll('.operator');
 const btnArr = Array.from(buttons);
 const calcNums = Array.from(number);
 const operator = Array.from(operators);
-const calcEdit = btnArr.filter((num, i) => (i < 3 || i === 18));
+const calcEdit = btnArr.filter((num, i) => (i < 3 || i === 17));
 
 const numArray = [];
 const sumArray = [];
@@ -15,7 +15,6 @@ const lastInput = [];
 
 const MAX_DISPLAY_LENGTH = 10;
 let num = 0;
-let sigFig = 0;
 let result = 0;
 let counter = 1;
 
@@ -57,24 +56,15 @@ for(let i = 0; i <  calcEdit.length; i++){
             num /= 100;
             displayText.textContent = num;
         }
-        /*
-        if(i === 2) {
-            num /= 100;
-            sigFig += 2;
-            num = +num.toFixed(sigFig);
-            displayText.textContent = num;
-            console.log(num);
-            if(displayText.textContent.length > 11){
-                num = +num.toString().split('').splice(0, num.toString().split('').length-2).join('');
+        if(i === 3) {
+            if(!displayText.textContent.includes('.')){
+                num += '.';
+                numArray.push('.');
+                console.log(numArray);
                 displayText.textContent = num;
-                if(displayText.textContent === '0') {
-                    numArray.splice(0, numArray.length);
-                    num = 0;
-                    sigFig = 0;
-                }
+                num = +num;
             }
         }
-        */
     });
 }
 
@@ -109,7 +99,6 @@ const reset = function() {
     sumArray.splice(0, sumArray.length);
     lastInput.splice(0, lastInput.length);
     num = 0;
-    sigFig = 0;
     result = 0;
     counter = 1;
 }
