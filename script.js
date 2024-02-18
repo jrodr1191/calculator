@@ -13,9 +13,11 @@ const opSelected = [];
 const op = ['+', '-', '*', '/'];
 const lastInput = [];
 
+const MAX_DISPLAY_LENGTH = 10;
 let num = 0;
 let sigFig = 0;
 let result = 0;
+let counter = 1;
 
 const display = document.querySelector('.calc-display');
 const displayText = document.querySelector('.text');
@@ -23,20 +25,21 @@ displayText.textContent = '0';
 
 for(let i = 0; i < calcNums.length; i++){
     calcNums[i].addEventListener('click', function() {
-        if(displayText.textContent.length < 10){
+        if(counter <= 8){
             if(displayText.textContent === '0' 
             || (sumArray.length === 1 
             && op.some(r => lastInput[lastInput.length-1] === r))) displayText.textContent = '';
             if(lastInput[lastInput.length-1] === '='){
                 reset();
-                console.log('oops');
                 displayText.textContent = '';
             }
             numArray.push(+calcNums[i].textContent);
             num = +numArray.join('');
             displayText.textContent += numArray[numArray.length-1];
             lastInput.push(+calcNums[i].textContent);
+            counter++;
         }
+        expNotate();
     });
 }
 
@@ -50,6 +53,11 @@ for(let i = 0; i <  calcEdit.length; i++){
             displayText.textContent = num * -1;
             num *= -1;
         }
+        if(i === 2){
+            num /= 100;
+            displayText.textContent = num;
+        }
+        /*
         if(i === 2) {
             num /= 100;
             sigFig += 2;
@@ -66,35 +74,33 @@ for(let i = 0; i <  calcEdit.length; i++){
                 }
             }
         }
-        if(num <= 0.00000009) num = 0;
+        */
     });
 }
 
 for(let i = 0; i < operator.length; i++){
     operator[i].addEventListener('click', function() {
-        //if(opSelected[opSelected.length-1] === 4){
         if(lastInput[lastInput.length-1] === '='){
             num = sumArray[0];
             opSelected[opSelected.length-1] = i;
-            console.log('equals: '+sumArray)
         }
         else if(sumArray.length === 1){
             sumArray[1] = num;
-            //console.log('poop1: '+sumArray);
             result = sumArray.reduce((total, current) => operate(total, operator[opSelected[opSelected.length-1]].textContent, current));
             displayText.textContent = result;
             sumArray[0] = result;
             sumArray.splice(1, 1);
-            console.log('poop2: '+sumArray);
         }
         if(sumArray.length === 0){
             sumArray[0] = num;
         } 
+        expNotate();
+        percentNum = num;
         num = 0;
         numArray.splice(0, numArray.length);
         opSelected.push(i);
         lastInput.push(operator[i].textContent);
-        //console.log('last input: '+lastInput);
+        counter = 1;
     });
 }
 
@@ -105,6 +111,17 @@ const reset = function() {
     num = 0;
     sigFig = 0;
     result = 0;
+    counter = 1;
+}
+
+const expNotate = function(){
+    if(displayText.textContent.length > MAX_DISPLAY_LENGTH){
+        displayText.textContent = 
+            displayText.textContent.slice(0, 
+            -(displayText.textContent.length - MAX_DISPLAY_LENGTH + 1)) 
+            + 'e' 
+            + (displayText.textContent.length - MAX_DISPLAY_LENGTH + 1);
+    }
 }
 
 const add = (a, b) => a + b;
